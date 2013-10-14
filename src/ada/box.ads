@@ -19,8 +19,7 @@ package Box is
    procedure Init(Laps_In : in INTEGER;
                   Circuit_Length_In : in FLOAT;
                   Competitor_Id_In : in INTEGER;
-                  Box_Strategy_In : in Artificial_Intelligence.Box_Strategy;
-                  Gas_Tank_Capacity_In : FLOAT);
+                  Box_Strategy_In : in Artificial_Intelligence.Box_Strategy);
 
    Interval : FLOAT; -- set after competition joining
    Sector_Qty : INTEGER := 3; --It's fixed in the f1 competitions
@@ -38,7 +37,6 @@ package Box is
    --+ them to compute the new startegy lap by lap.
    task type STRATEGY_UPDATER (Shared_Buffer : SYNCH_COMPETITION_UPDATES_POINT;
                                Shared_History : SYNCH_STRATEGY_HISTORY_POINT;
-                               Initial_Gas_Level : Common.FLOAT_POINT;
                                Initial_Tyre_Type : Common.STRING_POINT;
                                All_Info_Buffer : SYNCH_ALL_INFO_BUFFER_POINT) is
    end STRATEGY_UPDATER;

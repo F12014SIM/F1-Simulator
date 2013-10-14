@@ -74,7 +74,6 @@ package body Competitor_Computer is
          Unbounded_String.Set_Unbounded_String(Update_Str,
                                                "<?xml version=""1.0""?>" &
                                                "<update>" &
-                                               "<gasLevel>"& Common.Float_To_String(Data.Gas_Level) &"</gasLevel>" &
                                                "<tyreUsury>" & Common.Float_To_String(Data.Tyre_Usury) &"</tyreUsury>" &
                                                "<lap>" & Common.Integer_To_String(Data.Lap)&"</lap>" &
                                                "<sector>" & Common.Integer_To_String(Data.Sector)&"</sector>" &

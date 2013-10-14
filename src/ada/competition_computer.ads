@@ -18,7 +18,6 @@ package Competition_Computer is
       Sector : INTEGER;
       Lap : INTEGER;
       Time : FLOAT;
-      Gas_Level : FLOAT;
       Tyre_Usury : PERCENTAGE;
       BestLapNum : INTEGER;
       BestLaptime : FLOAT;
@@ -64,7 +63,6 @@ package Competition_Computer is
       entry Get_IsLastCheckInSector (Result : out BOOLEAN) ;
       entry Get_IsFirstCheckInSector (Result : out BOOLEAN) ;
       entry Get_PathLength (Result : out FLOAT) ;
-      entry Get_GasLevel (Result : out FLOAT) ;
       entry Get_TyreUsury (Result : out PERCENTAGE) ;
       entry Get_All( Result : out COMPETITOR_STATS) ;
 

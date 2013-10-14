@@ -29,7 +29,6 @@ package body Box is
    --+ ought to be used to calculate the first statistics when
    --+no statistical information are available yet.
    Mean_Tyre_Usury_Per_Km : Percentage := 0.83;
-   Mean_Litre_Per_Km : Float := 0.68;
 
    -- Total laps
    Laps : Integer := 0;
@@ -37,8 +36,7 @@ package body Box is
    procedure Init(Laps_In : in Integer;
                   Circuit_Length_In : in Float;
                   Competitor_Id_In : in Integer;
-                  Box_Strategy_In : in Artificial_Intelligence.Box_Strategy;
-                  Gas_Tank_Capacity_In : Float) is
+                  Box_Strategy_In : in Artificial_Intelligence.Box_Strategy;) is
    begin
 
       Laps := Laps_In;
@@ -48,7 +46,6 @@ package body Box is
 
       Artificial_Intelligence.Configure(Laps_In,
                                         Box_Strategy_In,
-                                        Gas_Tank_Capacity_In,
                                         Circuit_Length_In/1000.00);
 
    end Init;
@@ -129,7 +126,7 @@ package body Box is
             Lap := Lap + 1;
          end if;
 
-         exit when (Info.Path_Length = 0.0 or Info.Gas_Level <= 0.0 or Info.Tyre_Usury >= 100.0) or else Lap = Laps;
+         exit when (Info.Path_Length = 0.0 or Info.Tyre_Usury >= 100.0) or else Lap = Laps;
 
          Sector := Sector + 1;
       end loop;
@@ -145,12 +142,9 @@ package body Box is
 
       -- The starting value are hypothetic value depending on the static
       --+ configuration of a generic F1 car
-      Latest_Lap_Mean_Gas_Consumption : Float := Mean_Litre_Per_Km;
       Latest_Lap_Mean_Tyre_Usury : Float := Mean_Tyre_Usury_Per_Km;
       -- Variables used to calculate the means progressively
-      Previous_Sector_Gas_Level : Float := Initial_Gas_Level.all;
       Previous_Sector_Tyre_Usury : Float := 0.0;
-      Partial_Gas_Consumption_Mean : Float := Mean_Litre_Per_Km;
       Partial_Tyre_Usury_Mean : Float := Mean_Tyre_Usury_Per_Km;
 
       --it starts from 1 because the Strategy is updated once the competitor reaches
@@ -169,14 +163,10 @@ package body Box is
       --+ values
 
       Ada.Text_IO.Put_Line("Calculate first doable laps");
-      Evolving_Strategy.Laps_To_Pitstop := Artificial_Intelligence.Calculate_Doable_Laps(Initial_Gas_Level.all,
-                                                                                     0.0,
-                                                                                     Latest_Lap_Mean_Gas_Consumption,
-                                                                                     Latest_Lap_Mean_Tyre_Usury);
+      Evolving_Strategy.Laps_To_Pitstop := Artificial_Intelligence.Calculate_Doable_Laps(Latest_Lap_Mean_Tyre_Usury);
 
       Evolving_Strategy.Tyre_Type := Unbounded_String.To_Unbounded_String(Initial_Tyre_Type.all);
       Evolving_Strategy.Style := NORMAL;
-      Evolving_Strategy.Gas_Level := Initial_Gas_Level.all;
       Evolving_Strategy.Pit_Stop_Delay := 0.0;
 
       Ada.Text_IO.Put_Line("Adding strategy");
@@ -191,10 +181,6 @@ package body Box is
 
          Box_Data.Competition_Update(Extended_Information) := New_Info.all;
 
-         if( New_Info.Gas_Level < 0.0 ) then
-            New_Info.Gas_Level := 0.0;
-         end if;
-
          -- The following 7 lines handle the problem of the pitstop lap.
          --+ When the car does the pitstop, the statystics of bot the 3rd
          --+ and the 1st sectors get altered by the pitstop lane.
@@ -206,12 +192,6 @@ package body Box is
          if( Skip /= 0 ) then
 
             Skip := Skip - 1;
-            Partial_Gas_Consumption_Mean := Partial_Gas_Consumption_Mean +
-              Latest_Lap_Mean_Gas_Consumption;
-            Previous_Sector_Gas_Level := New_Info.Gas_Level;
-
-            Extended_Information.Mean_Gas_Consumption := Latest_Lap_Mean_Gas_Consumption;
-
             Partial_Tyre_Usury_Mean := Partial_Tyre_Usury_Mean +
               Latest_Lap_Mean_Tyre_Usury;
             Previous_Sector_Tyre_Usury := New_Info.Tyre_Usury;
@@ -220,21 +200,7 @@ package body Box is
 
             --TODO: don't use so stupid values for the means
          else
-            Partial_Gas_Consumption_Mean :=
-              Partial_Gas_Consumption_Mean +
-                ((Previous_Sector_Gas_Level - New_Info.Gas_Level)/
-                 (New_Info.Path_Length/1000.0) -- We want the ratio in Km
-
-              );
-
-            Extended_Information.Mean_Gas_Consumption :=
-              (Previous_Sector_Gas_Level - New_Info.Gas_Level)/
-              (New_Info.Path_Length/1000.0);
-
-
-            Previous_Sector_Gas_Level := New_Info.Gas_Level;
-
-
+          
             Partial_Tyre_Usury_Mean :=
               Partial_Tyre_Usury_Mean +
                 (New_Info.Tyre_Usury - Previous_Sector_Tyre_Usury)/
@@ -253,7 +219,7 @@ package body Box is
 
 
 
-         exit when (New_Info.Path_Length = 0.0 or New_Info.Gas_Level <= 0.0 or New_Info.Tyre_Usury >= 100.0) or else --The car is out
+         exit when (New_Info.Path_Length = 0.0 or New_Info.Tyre_Usury >= 100.0) or else --The car is out
            (New_Info.Lap = Laps-1 and New_Info.Sector = 3); --The competition is over
 
 
@@ -262,16 +228,13 @@ package body Box is
 
             Evolving_Strategy := Artificial_Intelligence.Compute_Strategy(New_Info.all,
                                                                           Evolving_Strategy,
-                                                                          Latest_Lap_Mean_Gas_Consumption,
                                                                           Latest_Lap_Mean_Tyre_Usury);
 
             --  "/3" because it's the sum of the mean of 3 sectors
-             Latest_Lap_Mean_Gas_Consumption := Partial_Gas_Consumption_Mean/3.0;
             Latest_Lap_Mean_Tyre_Usury := Partial_Tyre_Usury_Mean/3.0;
 
             Strategy_History.AddStrategy(Evolving_Strategy);
             Sector := 0;
-            Partial_Gas_Consumption_Mean := 0.0;
             Partial_Tyre_Usury_Mean := 0.0;
 
             All_Info.Add_Info(Update_In   => Extended_Information,
@@ -305,7 +268,6 @@ package body Box is
       begin
 
       XML_String := Unbounded_String.To_Unbounded_String("<update>" &
-                                                         "<gasLevel>" & Common.Float_To_String(update.Gas_Level) & "</gasLevel> <!-- % -->" &
                                                          "<tyreUsury>" & Common.Float_To_String(update.Tyre_Usury) & "</tyreUsury> <!-- % -->" &
                                                          "<lap>" & Common.Integer_To_String(update.Lap) & "</lap> " &
                                                          "<sector>" & Common.Integer_To_String(update.Sector) & "</sector>" &
@@ -321,7 +283,6 @@ package body Box is
       Update_NodeList : Node_List;
       Current_Node : NODE;
 
-      Gas_Level : Float;
       Max_Speed : Float;
       Tyre_Usury : Percentage;
       Lap : Integer;
@@ -340,8 +301,6 @@ package body Box is
 
       Current_Node := Item(Update_NodeList,0);
 
-      Gas_Level := Float'VALUE(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"gasLevel"))));
-
       Max_Speed := Float'VALUE(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"maxSpeed"))));
 
       Tyre_Usury := Float'VALUE(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"tyreUsury"))));
@@ -351,8 +310,6 @@ package body Box is
       Sector := Integer'VALUE(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"sector"))));
 
       Update.Max_Speed := Max_Speed;
-
-      Update.Gas_Level := Gas_Level;
 
       Update.Tyre_Usury := Tyre_Usury;
 

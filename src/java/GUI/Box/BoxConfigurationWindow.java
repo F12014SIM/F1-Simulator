@@ -37,14 +37,10 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
     private org.omg.CORBA.StringHolder monitorCorbaLoc = new org.omg.CORBA.StringHolder();
     private ORB orb;
     //sezione JSlider
-    private JSlider sliderFuelTank;
-    private JSlider sliderGasLevel;
     private JSlider sliderSpeed;
     //sezione JLabel
-    private JLabel valueFuelTank;
     private JLabel labelUsuryTyre;
     private JLabel valuePerCentUsury;
-    private JLabel labelGasLevel;
     private JLabel valueLevelFuel;
     private JLabel valueSpeed;
     private JLabel labelBox = new JLabel("Box Strategy");
@@ -53,11 +49,9 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
     private JLabel labelStable = new JLabel("Racing Stable");
     private JLabel labelMixture = new JLabel("Mixture");
     private JLabel labelVel = new JLabel("Full Speed");
-    private JLabel labelCapacityFuel = new JLabel("Tank Capacity");
     private JLabel labelstrps = new JLabel("Driver Strategy");
     private JLabel labelAcc = new JLabel("Speedup");
     private JLabel velLab = new JLabel("km/h");
-    private JLabel labelTank = new JLabel (" L (200..400)");
     private JLabel valueAcc = new JLabel("m/s^2");
     private JLabel labelHelp = new JLabel("CorbaLoc of Registration Handler");
     private JLabel labelCorbaloc = new JLabel("Corbaloc of Registration Hanlder");
@@ -70,14 +64,6 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
     private JComboBox comboBox;
     private JComboBox comboStrategypitstop;
 
-    private Integer valueFuel; 
-    private Integer minFuel;
-    private Integer maxFuel; 
-    private SpinnerNumberModel modelFuel;
-    
-    private Integer minTank = new Integer(200);
-    private Integer maxTank= new Integer(400); 
-    private SpinnerNumberModel modelTank;
     private SpinnerNumberModel modelAcc;
     //sezione panel
     private JPanel carPanel;
@@ -104,16 +90,12 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
     private String nome = new String("<firstname>Pippo</firstname>");
     private String cognome = new String("<lastname>Pluto<lastname>");
     private String tyreUsuryString = new String("<tyreusury>0.0</tyreusury>");
-    private String gasolineString = new String ("<gasolinelevel>50</gasolinelevel>");
     private String stringTipoGomme = new String("<mixture>Soft</mixture>");
     private String stringGomme = new String("<type_tyre>Sun</type_tyre>");
     private String stringStyle = new String("<engine>Normal</engine>");
     private String stringStrategy = new String("<boxStrategy>Normal</boxStrategy>");
-    private String stringSerbatoio = new String("<gastankcapacity>200.0</gastankcapacity>");
     private String stringMaxAcc = new String("<maxacceleration>7.0</maxacceleration>");
     private String stringMaxSpeed = new String("<maxspeed>300.0</maxspeed>");
-    private String gasolineStringBox = new String("<initialGasLevel>50.0</initialGasLevel>");
-    private String gasolineTankStringBox = new String("<gasTankCapacity>200.0</gasTankCapacity>");
     private String stringGommeBox = new String("<initialTyreType>Sun</initialTyreType>");
     private String stringModelGomme = new String("<model>michelin</model>");
     private String stringId;
@@ -160,47 +142,6 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
 	    createCar(panel, carConfigurationGrid);
 	}
 	public void createCar(JPanel panel, GridBagConstraints carConfigurationGrid){
-	    //impostazione capacità serbatioio
-	    sliderFuelTank = new JSlider(200,400);
-	    sliderFuelTank.setValue(200);
-	    valueFuelTank = new JLabel ("200 L(200-400)");
-	    sliderFuelTank.addChangeListener(new MyChangeAction("L(200-400)", sliderFuelTank, valueFuelTank));
-	    carConfigurationGrid.fill = GridBagConstraints.HORIZONTAL;
-	    carConfigurationGrid.gridx = 0;
-	    carConfigurationGrid.gridy = 0;
-	    carConfigurationGrid.ipady = 5;
-	    panel.add(labelCapacityFuel, carConfigurationGrid);
-	    carConfigurationGrid.fill = GridBagConstraints.HORIZONTAL;
-	    carConfigurationGrid.gridx = 1;
-	    carConfigurationGrid.gridy = 0;
-	    carConfigurationGrid.ipady = 5;
-	    panel.add(sliderFuelTank, carConfigurationGrid);
-	    carConfigurationGrid.fill = GridBagConstraints.HORIZONTAL;
-	    carConfigurationGrid.gridx = 2;
-	    carConfigurationGrid.gridy = 0;
-	    carConfigurationGrid.ipady = 5;
-	    panel.add(valueFuelTank, carConfigurationGrid);
-	
-	    sliderGasLevel = new JSlider(0,(Integer)sliderFuelTank.getValue());
-	    sliderGasLevel.setValue(50);
-	    valueLevelFuel = new JLabel("50L");
-	    sliderGasLevel.addChangeListener(new MyChangeAction("L",sliderGasLevel,  valueLevelFuel));
-	    labelGasLevel  = new JLabel("Gasoline Level");
-	    carConfigurationGrid.fill = GridBagConstraints.HORIZONTAL;
-	    carConfigurationGrid.gridx = 0;
-	    carConfigurationGrid.gridy = 1;
-	    carConfigurationGrid.ipady = 5;
-	    panel.add(labelGasLevel, carConfigurationGrid);
-	    carConfigurationGrid.fill = GridBagConstraints.HORIZONTAL;
-	    carConfigurationGrid.gridx = 1;
-	    carConfigurationGrid.gridy = 1;
-	    carConfigurationGrid.ipady = 5;
-	    panel.add(sliderGasLevel, carConfigurationGrid);
-	    carConfigurationGrid.fill = GridBagConstraints.HORIZONTAL;
-	    carConfigurationGrid.gridx = 2;
-	    carConfigurationGrid.gridy = 1;
-	    carConfigurationGrid.ipady = 5;
-	    panel.add(valueLevelFuel, carConfigurationGrid);
 	    //sezione mescola delle gomme montate
 	    String[] tipoGomme = { "Soft", "Hard"};
 	    comboTypeTyre = new JComboBox(tipoGomme);
@@ -309,21 +250,6 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
 		simboloT = p_simbolo;
 		sliderT = p_slider;
 		valoreT = p_valore;
-	    }
-	    public void stateChanged(ChangeEvent ce){
-		Integer value = sliderT.getValue();
-		String str = Integer.toString(value);
-		valoreT.setText(str+simboloT);
-		Integer a = new Integer((Integer)sliderFuelTank.getValue()-value);
-		if (simboloT == "L") {
-		    stringSerbatoio = new String("<gastankcapacity>"+Integer.toString((Integer)sliderFuelTank.getValue())+".0</gastankcapacity>");
-		    gasolineString = new String("<gasolinelevel>"+value.toString()+".0</gasolinelevel>");
-		    gasolineStringBox = new String("<initialGasLevel>"+value.toString()+".0</initialGasLevel>");
-		    gasolineTankStringBox = new String("<gasTankCapacity>"+value.toString()+".0</gasTankCapacity>");
-		}
-		if(simboloT =="L(200-400)"){
-		    sliderGasLevel.setMaximum((Integer)sliderT.getValue());
-		}
 	    }
 	}
     }
@@ -440,8 +366,6 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
 			scuderia = new String("<team>"+textTeam.getText()+"</team>");			    
 			nome = new String("<firstname>"+textName.getText()+"</firstname>");
 			cognome = new String("<lastname>"+textSurname.getText()+"</lastname>");
-			valueFuelInt = new Integer((int)sliderGasLevel.getValue());
-			gasolineString = new String("<gasolinelevel>"+valueFuelInt.toString()+".0</gasolinelevel>");
 			stringMaxAcc = new String("<maxacceleration>"+jsAcc.getValue().toString()+"</maxacceleration>");
 			stringMaxSpeed = new String("<maxspeed>"+Integer.toString((Integer)sliderSpeed.getValue())+".0</maxspeed>");
 			boolean ret = false;
@@ -526,10 +450,8 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
    
     public void resetInfo(){
 	System.out.println("Reset Field");
-	sliderGasLevel.setValue(50);//benzina caricata
 	comboBox.setSelectedIndex(0);//tipo di guida
 	comboTypeTyre.setSelectedIndex(0);//mescola gomme montate
-	sliderFuelTank.setValue(200);//capacità serbatoio
 	jsAcc.setValue(12.000);//valore accelerazione
 	textName.setText("Pippo");//nome predefinito
 	textSurname.setText("Pluto");//cognome predefinito
@@ -573,12 +495,6 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
 	    NodeList maxacceleration = element.getElementsByTagName("maxacceleration");
 	    line = (Element) maxacceleration.item(0);
 	    jsAcc.setValue(new Double(getCharacterDataFromElement(line)));
-
-	    element = (Element) nodes.item(i);
-	    NodeList gastank = element.getElementsByTagName("gastankcapacity");
-	    line = (Element) gastank.item(0);
-	    Double sliderFuelTankInteger = new Double(getCharacterDataFromElement(line)); 
-	    sliderFuelTank.setValue(sliderFuelTankInteger.intValue());
 	    
 	    element = (Element) nodes.item(i);
 	    NodeList engine = element.getElementsByTagName("engine");
@@ -599,11 +515,6 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
 	    element = (Element) nodes.item(i);
 	    NodeList tyre = element.getElementsByTagName("tyreusury");
 	    line = (Element) tyre.item(0);
-	    
-	    element = (Element) nodes.item(i);
-	    NodeList level = element.getElementsByTagName("gasolinelevel");
-	    line = (Element) level.item(0);
-	    sliderGasLevel.setValue(new Double(getCharacterDataFromElement(line)).intValue());
 
 	    element = (Element) nodes.item(i);
 	    NodeList mixture = element.getElementsByTagName("mixture");
@@ -654,10 +565,9 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
 	    out.println(stringSerbatoio);
 	    out.println(stringStyle);  
 	    out.println(tyreUsuryString);
-	    out.println(gasolineString);
 	    out.println(stringTipoGomme);
 	    out.println(stringModelGomme);
-	    competitorXML = competitorXML + stringMaxSpeed +'\n'+ stringMaxAcc +'\n'+ stringSerbatoio +'\n'+ stringStyle +'\n'+ tyreUsuryString +'\n'+ gasolineString +'\n'+ stringTipoGomme +'\n'+ stringModelGomme + '\n' + stringGomme + "\n</car>\n </car_driver>";
+	    competitorXML = competitorXML + stringMaxSpeed +'\n'+ stringMaxAcc +'\n'+ stringSerbatoio +'\n'+ stringStyle +'\n'+ tyreUsuryString +'\n' + stringTipoGomme +'\n'+ stringModelGomme + '\n' + stringGomme + "\n</car>\n </car_driver>";
 	    out.println(stringGomme + "\n</car>");
 	    out.println("</car_driver>");	
 	    out.close();
@@ -684,8 +594,6 @@ public class BoxConfigurationWindow implements AdminPanelInterface{
 	    out.println(stringGommeBox);
 	    out.println("<laps>"+laps.value+"</laps>");
 	    out.println("<circuitLength>"+circuitLength.value+"</circuitLength>");
-	    out.println(gasolineStringBox);
-	    out.println(gasolineTankStringBox);
 	    out.println("<competitorID>"+competitorId.value+"</competitorID>");
 	    out.println(stringStrategy);
 	    out.println("</config>");

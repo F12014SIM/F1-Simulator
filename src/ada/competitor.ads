@@ -42,7 +42,6 @@ package Competitor is
    -- Get Methods
    function Get_First_Name(Competitor_In : Competitor_Details_Point) return Str.Unbounded_String;
    function Get_Tyre_Usury(Competitor_In : Competitor_Details_Point) return Common.PERCENTAGE;
-   function Get_Gasoline_Level(Competitor_In : Competitor_Details_Point) return Float;
    function Get_Max_Acceleration(Competitor_In : Competitor_Details_Point) return Float;
    function Get_Last_Speed_Reached(Competitor_In : Competitor_Details_Point) return Float;
    function Get_Strategy_Style(Competitor_In : Competitor_Details_Point) return Common.Driving_Style;
@@ -55,10 +54,8 @@ package Competitor is
    procedure Configure_Car(Car_In : in out Car;
                            Max_Speed_In : Float;
                            Max_Acceleration_In : Float;
-                           Gas_Tank_Capacity_In : Float;
                            Engine_In : Str.Unbounded_String;
                            Tyre_Usury_In : Common.Percentage;
-                           Gasoline_Level_In : Float;
                            Mixture_In : Str.Unbounded_String;
                            Model_In : Str.Unbounded_String;
                            Tyre_Type_In : Str.Unbounded_String);
@@ -77,10 +74,8 @@ private
    type Car is record
       Max_Speed          : Float;
       Max_Acceleration   : Float;
-      Gas_Tank_Capacity  : Float;
       Engine             : Str.Unbounded_String := Str.Null_Unbounded_String;
       Tyre_Usury         : Common.Percentage;
-      Gasoline_Level     : Float;
       Mixture            : Str.Unbounded_String := Str.Null_Unbounded_String;
       Model              : Str.Unbounded_String := Str.Null_Unbounded_String;
       Tyre_Type          : Str.Unbounded_String := Str.Null_Unbounded_String;

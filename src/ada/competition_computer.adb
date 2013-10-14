@@ -210,11 +210,6 @@ package body Competition_Computer is
          Result := Statistic.PathLength;
       end Get_PathLength;
 
-      entry Get_GasLevel (Result : out FLOAT) when Initialised = TRUE is
-      begin
-         Result := Statistic.Gas_Level;
-      end Get_GasLevel;
-
       entry Get_TyreUsury (Result : out PERCENTAGE) when Initialised = TRUE is
       begin
          Result := Statistic.Tyre_Usury;
@@ -487,7 +482,7 @@ package body Competition_Computer is
 
       --If the checkpoint is the last one of the circuit, update the PLACEMENT table as well
       if(Data.LastCheckInSect = true and Data.Sector = 3 and
-           Data.Gas_Level > 0.0 and Data.Tyre_Usury < 100.0) then
+           Data.Tyre_Usury < 100.0) then
 
 
          Placement_Handler.Update_Classific(Competitor_ID,
@@ -502,7 +497,7 @@ package body Competition_Computer is
       Competitor_Statistics.all(Competitor_ID).Last_Initialized_Index := (Data.Lap*Checkpoints) + Data.Checkpoint;
 
    --The competitor is out
-      if(Data.Gas_Level > 0.0 and Data.Tyre_Usury < 100.0) then
+      if(Data.Tyre_Usury < 100.0) then
          --If not retired and the array is full, the competition is regularly finished
 
          if(((Data.Lap*Checkpoints) + Data.Checkpoint) =

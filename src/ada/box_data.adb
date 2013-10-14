@@ -224,13 +224,11 @@ package body Box_Data is
 
       Tmp_String := Unbounded_String.To_Unbounded_String
         ("<status>" &
-         "<gasLevel>" & Common.Float_To_String(Data.Per_Sector_Update.Gas_Level) & "</gasLevel>" &
          "<tyreUsury>" & Common.Float_To_String(Data.Per_Sector_Update.Tyre_Usury) & "</tyreUsury>" &
          "<lap>" & Common.Integer_To_String(Data.Per_Sector_Update.Lap) & "</lap> " &
          "<sector>" & Common.Integer_To_String(Data.Per_Sector_Update.Sector) & "</sector>" &
          --"<metres>" & Common.Float_To_String(Data.Per_Sector_Update.PathLength) & "</metres>" &
          "<meanTyreUsury>" & Common.Float_To_String(Data.Per_Sector_Update.Mean_Tyre_Usury) & "</meanTyreUsury>" &
-         "<meanGasConsumption>" & Common.Float_To_String(Data.Per_Sector_Update.Mean_Gas_Consumption) & "</meanGasConsumption>" &
          "<maxSpeed>" & Common.Float_To_String(Data.Per_Sector_Update.Max_Speed) & "</maxSpeed>" &
          "</status>" );
 
@@ -279,11 +277,6 @@ package body Box_Data is
       Unbounded_String.To_Unbounded_String("<style>") &
       Style &
       Unbounded_String.To_Unbounded_String("</style>");
-
-      XML_String := XML_String &
-      Unbounded_String.To_Unbounded_String("<gasLevel>") &
-      Float_To_String(Strategy_in.Gas_Level) &
-      Unbounded_String.To_Unbounded_String("</gasLevel>");
 
       XML_String := XML_String &
       Unbounded_String.To_Unbounded_String("<Laps_To_Pitstop>") &

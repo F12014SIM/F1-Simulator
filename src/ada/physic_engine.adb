@@ -22,10 +22,9 @@ package body Physic_Engine is
    end Evaluate_Tyre_Usury;
 
    function Calculate_Max_Speed_Reachable(Max_Speed : Float;
-                                          Tyre_Usury : Common.Percentage;
-                                          Gasoline_Level : Float) return Float is
+                                          Tyre_Usury : Common.Percentage) return Float is
    begin
-      return  Max_Speed - ((( Tyre_Usury / 100.0) * ( Max_Speed ) ) / 10.0) - (((Gasoline_Level * 0.025)*(Max_Speed)) / 100.0);-- con 400 litri(massimo serbatoio esistente) si ha una decadenza del 10% della velocitï¿½ massima raggiungibile
+      return  Max_Speed - ((( Tyre_Usury / 100.0) * ( Max_Speed ) ) / 10.0) / 100.0);
    end Calculate_Max_Speed_Reachable;
 
    procedure Calculate_Time_And_Speed(Max_Speed_Reachable  : Float;
@@ -84,7 +83,6 @@ package body Physic_Engine is
                                       Speed_Out              : out Float;
                                       Strategy_Style         : Common.Driving_Style;
                                       Tyre_Usury             : Common.Percentage;
-                                      Gasoline_Level         : Float;
                                       Max_Speed              : Float;
                                       Max_Acceleration       : Float) is
 
@@ -93,7 +91,6 @@ package body Physic_Engine is
       Grip_Path : Float; -- attrito
      -- Difficulty_Path : Float; -- difficoltà del tratto
       --Tyre_Usury : Common.Percentage; -- usura delle gomme %
-      --Gasoline_Level : Float; -- livello di benzina l
       Max_Speed_Reachable : Float; --velocità massima raggiungibile km/h
       -- Max_Speed : Float := Competitor_In.Get_Max_Speed; -- km/h
       Length_Path_Critical : Float; -- m
@@ -121,8 +118,6 @@ package body Physic_Engine is
 
       --Tyre_Usury := Competitor_In.Get_Tyre_Usury;
 
---      Gasoline_Level:=Competitor_In.Get_Gasoline_Level;
-
   --    Max_Speed := Competitor_In.Get_Max_Speed;
 
       --acc := Get_Max_Acceleration(Car_Driver);
@@ -139,11 +134,8 @@ package body Physic_Engine is
       Evaluate_Tyre_Usury(Acceleration, Tyre_Usury);
       -- fine aggiornamento accelerazione in base allo stile di guida e all'usura delle gomme
       --calcolo velocità massima
-      Max_Speed_Reachable := Calculate_Max_Speed_Reachable(Max_Speed, Tyre_Usury, Gasoline_Level);
+      Max_Speed_Reachable := Calculate_Max_Speed_Reachable(Max_Speed, Tyre_Usury);
       --controllo benzina
---        if Gasoline_Level <= 0.0 then
---           Ada.Text_IO.Put_Line("-------------------"&Integer'Image(Car_Competitor_Id)&" : ATTENZIONE - BENZINA FINITA !!!");
---        end if;
 
       Calculate_Time_And_Speed(Max_Speed_Reachable,
                                Last_Speed_Reached,
@@ -175,21 +167,16 @@ package body Physic_Engine is
 
    procedure Update_Usury_Modifier_Speed(Choosen_Path : Integer;
                                          Speed_Array  : Float_Array;
-                                         Temp_Usury   : in out Float;
-                                         Gas_Modifier : in out Float) is
+                                         Temp_Usury   : in out Float) is
    begin
       if Speed_Array(Choosen_Path) >= 300.0 then
          Temp_Usury   := Temp_Usury + 0.02;
-         Gas_Modifier := 0.15;
       elsif Speed_Array(Choosen_Path) >= 200.0 and Speed_Array(Choosen_Path) < 300.0 then
          Temp_Usury   := Temp_Usury + 0.01;
-         Gas_Modifier := 0.10;
       elsif Speed_Array(Choosen_Path) >= 100.0 and Speed_Array(Choosen_Path) < 200.0 then
          Temp_Usury   := Temp_Usury + 0.007;
-         Gas_Modifier := 0.05;
       else
          Temp_Usury   := Temp_Usury + 0.005;
-         Gas_Modifier := 0.0;
       end if;
    end Update_Usury_Modifier_Speed;
 
@@ -206,7 +193,6 @@ package body Physic_Engine is
                       Max_Acceleration   : Float;
                       Tyre_Type          : String_Unb.Unbounded_String;
                       Tyre_Usury         : in out Float;
-                      Gasoline_Level     : in out Float;
                       Length_Path        : out Float;
                       Crossing_Time_Out  : out Float;
                       Speed_Out          : out Float;
@@ -227,7 +213,6 @@ package body Physic_Engine is
       Speed_Array                 : Float_Array(1..Paths_2_Cross.Get_Size);
       Waiting_Time_Min         	  : Float := 0.0;
       Temp_Usury                  : Float := 0.0;
-      Gas_Modifier                : Float := 0.0;
       Minimum_Car_To_Car_Distance : constant Float := 0.2;
    begin
       -- loop on paths
@@ -245,7 +230,6 @@ package body Physic_Engine is
                                   Speed_Temp,
                                   Strategy_Style,
                                   Tyre_Usury,
-                                  Gasoline_Level,
                                   Max_Speed,
                                   Max_Acceleration);
 
@@ -300,7 +284,7 @@ package body Physic_Engine is
          --aggiorno il modificatore in base alla mescola
          Update_Usury_Modifier_Tyre_Type(Tyre_Type, Temp_Usury);
          --aggiorno il modificatore in base alla velocità massima raggiunta
-         Update_Usury_Modifier_Speed(Chosen_Path, Speed_Array, Temp_Usury, Gas_Modifier);
+         Update_Usury_Modifier_Speed(Chosen_Path, Speed_Array, Temp_Usury);
          -- adesso in Temp_Usury è presente una percentuale da sommare a quella statica calcolata.
          -- al massimo il valore di usura arriva a 0.86, nella peggiore delle ipotesi.
          -- il valore di usura si intende ogni 1000 metri
@@ -313,9 +297,6 @@ package body Physic_Engine is
             Tyre_Usury := Tyre_Usury + (Paths_2_Cross.Get_Length(Chosen_Path)*(0.8+Temp_Usury)/1000.0);
          end if;
          --il valore di 0.8 è stato scelto facendo il calcolo che con le gomme si percorrono circa 115 km
-         -- calcolo Gas_Modifier
-
-         Gasoline_Level := Gasoline_Level - ((0.6 + Gas_Modifier) * Paths_2_Cross.Get_Length(Chosen_Path)/1000.0);
 
          -- 0.6 è il valore di  litri al km consumati
          -- questo valore può arrivare (in base alla velocità) fino a 0.75 litri al km

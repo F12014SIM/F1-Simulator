@@ -38,7 +38,6 @@ package Common is
    type Strategy is record
       Tyre_Type : Unbounded_String.Unbounded_String := Unbounded_String.Null_Unbounded_String;
       Style : Driving_Style;
-      Gas_Level : Float;
       Laps_To_Pitstop : Integer; --PitStopLaps
       Pit_Stop_Delay : Float;
    end record;

@@ -51,7 +51,6 @@ package body CompetitorRadio is
       Current_Node := Item(Config,0);
 
       Tmp_Strategy.Tyre_Type := Unbounded_String.To_Unbounded_String(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"tyreType"))));
-      Tmp_Strategy.Gas_Level := Float'VALUE(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"gasLevel"))));
       Tmp_Strategy.Laps_To_Pitstop := Integer'VALUE(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"Laps_To_Pitstop"))));
       Tmp_Strategy.Pit_Stop_Delay := Float'VALUE(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"Pit_Stop_Delay"))));
 

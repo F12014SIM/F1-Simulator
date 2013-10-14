@@ -43,16 +43,13 @@ public class BoxScreen extends Thread{
     private GridBagConstraints meanPanelGrid;
     private GridBagConstraints outPanelGrid;
 
-    private JTextField textBoxGas = new JTextField("",6);
     private JTextField textBoxTyre = new JTextField("",6);
-    private JLabel labelGas = new JLabel(" l / km ");
     private JLabel labelTyre = new JLabel(" % / km ");
-    private JLabel labelGasExpl = new JLabel("Mean fuel consumption");
     private JLabel labelTyreExpl = new JLabel("Mean tyre usury");
     private JLabel labelInfo_1 = new JLabel("Team - , Competitor -");
     private JLabel labelInfo_2 = new JLabel("Max speed reachable = - , Max acceleration = -");
-    private JLabel labelInfo_3 = new JLabel("Tank capacity = , Tyre mixture = -");
-    private JLabel labelInfo_4 = new JLabel("Tyre usury = - , Fuel level = -");
+    private JLabel labelInfo_3 = new JLabel("Tyre mixture = -");
+    private JLabel labelInfo_4 = new JLabel("Tyre usury = -");
     private JLabel labelInfo_6 = new JLabel("Laps to pitstop = - , Driving style -");
     private JLabel labelInfo_7 = new JLabel("Pitstop delay at lap - = -");
     private JLabel labelInfo_8 = new JLabel("Box strategy = - ");
@@ -65,17 +62,14 @@ public class BoxScreen extends Thread{
     private ORB orb;
     private String ritorno = new String();
 
-    private Double gasLevelValue;
     private Double tyreUsuryValue;
     private Integer sectorValue;
     private Integer lapsValue;
     private Double metresValue;
     private Double meanSpeedValue;
     private Double meanTyreUsuryValue;
-    private Double meanGasConsumptionValue;
     private String styleValue;
     private String tyreValue;
-    private Double gasLevelStrategyValue;
     private Integer pitstopLapValue;
     private float pitstopDelayValue;
     private Double maxSpeedReachedValue;
@@ -85,10 +79,8 @@ public class BoxScreen extends Thread{
     private String lastnameValue;
     private Double maxspeedValue;
     private Double maxaccelerationValue;
-    private Double gastankcapacityValue;
     private String engineValue;
     private Double tyreUsuryCarValue;
-    private Double gasLevelCarValue;
     private String mixtureValue;
     private String typetyreValue;
     private String boxStrategyString;
@@ -159,23 +151,6 @@ public class BoxScreen extends Thread{
 
 	meanPanelGrid.fill = GridBagConstraints.HORIZONTAL;
 	meanPanelGrid.gridx = 0;
-	meanPanelGrid.gridy = 0;
-	meanPanelGrid.ipady = 5;
-	meanPanel.add(labelGasExpl, meanPanelGrid);
-
-	meanPanelGrid.fill = GridBagConstraints.HORIZONTAL;
-	meanPanelGrid.gridx = 1;
-	meanPanelGrid.gridy = 0;
-	meanPanelGrid.ipady = 5;
-	meanPanel.add(textBoxGas, meanPanelGrid);
-	meanPanelGrid.fill = GridBagConstraints.HORIZONTAL;
-	meanPanelGrid.gridx = 2;
-	meanPanelGrid.gridy = 0;
-	meanPanelGrid.ipady = 5;
-	meanPanel.add(labelGas, meanPanelGrid);
-
-	meanPanelGrid.fill = GridBagConstraints.HORIZONTAL;
-	meanPanelGrid.gridx = 0;
 	meanPanelGrid.gridy = 1;
 	meanPanelGrid.ipady = 5;
 	meanPanel.add(labelTyreExpl, meanPanelGrid);
@@ -195,7 +170,6 @@ public class BoxScreen extends Thread{
     public void createTableOutput(){
 	model.addColumn("Lap");
 	model.addColumn("Sector");
-	model.addColumn("Fuel Level (l)");
 	model.addColumn("Tyre Usury (%)");
 	model.addColumn("Speed reached (km/h)");
 	model.addColumn("Time (h:m:s:mll)");
@@ -232,8 +206,8 @@ public class BoxScreen extends Thread{
 	try{
 	    labelInfo_1.setText("Team "+teamValue+", Competitor "+firstnameValue+" "+lastnameValue);
 	    labelInfo_2.setText("Max speed reachable = "+maxspeedValue.toString()+", Max acceleration = "+maxaccelerationValue.toString());
-	    labelInfo_3.setText("Tank capacity = "+gastankcapacityValue.toString()+ ", Tyre mixture = "+mixtureValue);
-	    labelInfo_4.setText("Tyre usury = "+tyreUsuryCarValue.toString()+" , Fuel level = "+gasLevelCarValue.toString());
+	    labelInfo_3.setText("Tyre mixture = "+mixtureValue);
+	    labelInfo_4.setText("Tyre usury = "+tyreUsuryCarValue.toString());
 	    labelInfo_6.setText("Laps to pitstop = - , Driving style "+styleValue);
 	    labelInfo_8.setText("Box Strategy = "+boxStrategyString);
 
@@ -253,34 +227,27 @@ public class BoxScreen extends Thread{
 	    while(i<=(laps*3)){
 		temp = comp_radio.GetUpdate(i,j,pathLength);
 		readXml(temp);
-		double gas=(double)(gasLevelValue);
 		double tyre=(double)(tyreUsuryValue);
 		double speed=(double)(maxSpeedReachedValue);
-		double meanGas=(double)(meanGasConsumptionValue);
 		double meanTyreU=(double)(meanTyreUsuryValue);
 		int decimal=1000; //3 cifre decimali
-		int  gasInt= (int)(decimal*gas);
 		int tyreInt = (int)(decimal*tyre);
 		int speedInt = (int)(decimal*speed);
-		int meanGasInt = (int)(decimal*meanGas);
 		int meanTyreInt = (int)(decimal*meanTyreU);
-		double gasPrint=(double)gasInt/(double)decimal;
 		double tyrePrint=(double)tyreInt/(double)decimal;
 		double speedPrint=(double)speedInt/(double)decimal;
-		double meanGasPrint=(double)meanGasInt/(double)decimal;
 		double meanTyrePrint=(double)meanTyreInt/(double)decimal;
 		String time = convert(j.value);
 		String metres = convert(pathLength.value);
-		if( gas <= 0.0 || tyre >=100.0 ){
+		if( tyre >=100.0 ){
 		    model.insertRow(0,new Object[]{lapsValue,sectorValue,"RITIRED","RITIRED","RITIRED",time});
 		    ListSelectionModel selectionModel = outTable.getSelectionModel();
 		    selectionModel.setSelectionInterval(0,0);
 		    i=(short)((laps*3)+1);
 		}
-		else{model.insertRow(0,new Object[]{lapsValue, sectorValue, gasPrint,tyrePrint,speedPrint,time});//j.value});
+		else{model.insertRow(0,new Object[]{lapsValue, sectorValue,tyrePrint,speedPrint,time});//j.value});
 		    ListSelectionModel selectionModel = outTable.getSelectionModel();
 		    selectionModel.setSelectionInterval(0,0);
-		    textBoxGas.setText(new Double(meanGasPrint).toString());//aggiorno consumo medio
 		    textBoxTyre.setText(new Double(meanTyrePrint).toString());//aggiorno velocità media
 		    if (pitstopLapValue !=null){
 			labelInfo_6.setText("Laps to pitstop = "+pitstopLapValue.toString()+", Driving style "+styleValue);
@@ -290,8 +257,8 @@ public class BoxScreen extends Thread{
 			}
 			labelInfo_1.setText("Team "+teamValue+", Competitor "+firstnameValue+" "+lastnameValue);
 			labelInfo_2.setText("Max speed reachable = "+maxspeedValue.toString()+", Max acceleration = "+maxaccelerationValue.toString());
-			labelInfo_3.setText("Tank capacity = "+gastankcapacityValue.toString()+ ", Tyre mixture = "+mixtureValue);
-			labelInfo_4.setText("Tyre usury = "+tyreUsuryCarValue.toString()+" , Fuel level = "+gasLevelCarValue.toString());
+			labelInfo_3.setText("Tyre mixture = "+mixtureValue);
+			labelInfo_4.setText("Tyre usury = "+tyreUsuryCarValue.toString());
 			outPanel.updateUI();
 		    }
 		    i=(short)(i+1);    
@@ -330,11 +297,6 @@ public class BoxScreen extends Thread{
 	    NodeList nodes = doc.getElementsByTagName("status");
 	    
 	    int i=0;
-	    Element element = (Element) nodes.item(i);
-	    NodeList gasLevel = element.getElementsByTagName("gasLevel");
-	    Element line = (Element) gasLevel.item(0);
-	    gasLevelValue = new Double(getCharacterDataFromElement(line));
-	            
 	    NodeList tyreUsury = element.getElementsByTagName("tyreUsury");
 	    line = (Element) tyreUsury.item(0);
 	    tyreUsuryValue = new Double(getCharacterDataFromElement(line));
@@ -351,10 +313,6 @@ public class BoxScreen extends Thread{
 	    line = (Element) meanTyreUsury.item(0);
 	    meanTyreUsuryValue = new Double(getCharacterDataFromElement(line));
 	    
-	    NodeList meanGasConsumption = element.getElementsByTagName("meanGasConsumption");
-	    line = (Element) meanGasConsumption.item(0);
-	    meanGasConsumptionValue = new Double(getCharacterDataFromElement(line));
-	    
 	    NodeList maxSpeedReached = element.getElementsByTagName("maxSpeed");
 	    line = (Element) maxSpeedReached.item(0);
 	    maxSpeedReachedValue = new Double(getCharacterDataFromElement(line));
@@ -370,10 +328,6 @@ public class BoxScreen extends Thread{
 		NodeList style = element2.getElementsByTagName("style");
 		line = (Element) style.item(0);
 		styleValue = new String(getCharacterDataFromElement(line));
-
-		NodeList gasLevel2 = element2.getElementsByTagName("gasLevel");
-		line = (Element) gasLevel2.item(0);
-		gasLevelStrategyValue = new Double(getCharacterDataFromElement(line));
 
 		NodeList pitStopLaps = element2.getElementsByTagName("Laps_To_Pitstop");
 		line = (Element) pitStopLaps.item(0);
@@ -432,11 +386,6 @@ public class BoxScreen extends Thread{
 	    maxaccelerationValue = new Double(getCharacterDataFromElement(line));
 
 	    element = (Element) nodes.item(i);
-	    NodeList gastank = element.getElementsByTagName("gastankcapacity");
-	    line = (Element) gastank.item(0);
-	    gastankcapacityValue = new Double(getCharacterDataFromElement(line));
-
-	    element = (Element) nodes.item(i);
 	    NodeList engine = element.getElementsByTagName("engine");
 	    line = (Element) engine.item(0);
 	    styleValue = new String(getCharacterDataFromElement(line));
@@ -445,11 +394,6 @@ public class BoxScreen extends Thread{
 	    NodeList tyre = element.getElementsByTagName("tyreusury");
 	    line = (Element) tyre.item(0);
 	    tyreUsuryCarValue = new Double(getCharacterDataFromElement(line));
-
-	    element = (Element) nodes.item(i);
-	    NodeList level = element.getElementsByTagName("gasolinelevel");
-	    line = (Element) level.item(0);
-	    gasLevelCarValue = new Double(getCharacterDataFromElement(line));
 
 	    element = (Element) nodes.item(i);
 	    NodeList mixture = element.getElementsByTagName("mixture");

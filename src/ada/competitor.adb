@@ -33,11 +33,10 @@ package body Competitor is
       return Competitor_In.Racing_Driver.First_Name;
    end Get_First_Name;
 
-   procedure Get_Status(Competitor_In : Competitor_Details_Point; Tyre_Usury_Out : out Float; Gas_Level_Out : out Float) is
+   procedure Get_Status(Competitor_In : Competitor_Details_Point; Tyre_Usury_Out : out Float) is
 
    begin
       Tyre_Usury_Out:=Competitor_In.Racing_Car.Tyre_Usury;
-      Gas_Level_Out:=Competitor_In.Racing_Car.Gasoline_Level;
    end Get_Status;
 
 
@@ -45,20 +44,16 @@ package body Competitor is
    procedure Configure_Car(Car_In 		: in out CAR;
                            Max_Speed_In 	: Float;
                            Max_Acceleration_In 	: Float;
-                           Gas_Tank_Capacity_In : Float;
                            Engine_In 		: Str.Unbounded_String;
                            Tyre_Usury_In 	: Common.PERCENTAGE;
-                           Gasoline_Level_In 	: Float;
                            Mixture_In 		: Str.Unbounded_String;
                            Model_In 		: Str.Unbounded_String;
                            Tyre_Type_In 	: Str.Unbounded_String) is
    begin
       Car_In.Max_Speed 		:= Max_Speed_In;
       Car_In.Max_Acceleration 	:= Max_Acceleration_In;
-      Car_In.Gas_Tank_Capacity 	:= Gas_Tank_Capacity_In;
       Car_In.Engine		:= Engine_In;
       Car_In.Tyre_Usury		:= Tyre_Usury_In;
-      Car_In.Gasoline_Level	:= Gasoline_Level_In;
       Car_In.Mixture		:= Mixture_In;
       Car_In.Model		:= Model_In;
       Car_In.Tyre_Type		:= Tyre_Type_In;
@@ -96,9 +91,7 @@ package body Competitor is
       function Configure_Car_File(xml_file_In : DOCUMENT) return CAR is
          Max_Speed_In 		: Float;
          Max_Acceleration_In 	: Float;
-         Gas_Tank_Capacity_In 	: Float;
          Tyre_Usury_In		: Float;
-         Gasoline_Level_In 	: Float;
          Mixture_In 		: Str.Unbounded_String;
          Model_In 		: Str.Unbounded_String;
          Tyre_Type_In 		: Str.Unbounded_String;
@@ -130,20 +123,16 @@ package body Competitor is
          car_XML 		:= Child_Nodes(Current_Node);
          Max_Speed_In 		:= Float'Value(Node_Value(First_Child(Get_Feature_Node(Current_Node,"maxspeed"))));
          Max_Acceleration_In 	:= Float'Value(Node_Value(First_Child(Get_Feature_Node(Current_Node,"maxacceleration"))));
-         Gas_Tank_Capacity_In 	:= Float'Value(Node_Value(First_Child(Get_Feature_Node(Current_Node,"gastankcapacity"))));
          Engine_In 		:= Str.To_Unbounded_String(Node_Value(First_Child(Get_Feature_Node(Current_Node,"engine"))));
          Tyre_Usury_In 		:= Float'Value(Node_Value(First_Child(Get_Feature_Node(Current_Node,"tyreusury"))));
-         Gasoline_Level_In 	:= Float'Value(Node_Value(First_Child(Get_Feature_Node(Current_Node,"gasolinelevel"))));
          Mixture_In 		:= Str.To_Unbounded_String(Node_Value(First_Child(Get_Feature_Node(Current_Node,"mixture"))));
          Model_In 		:= Str.To_Unbounded_String(Node_Value(First_Child(Get_Feature_Node(Current_Node,"model"))));
          Tyre_Type_In 		:= Str.To_Unbounded_String(Node_Value(First_Child(Get_Feature_Node(Current_Node,"type_tyre"))));
          Configure_Car(Car_In,
                        Max_Speed_In,
                        Max_Acceleration_In,
-                       Gas_Tank_Capacity_In,
                        Engine_In,
                        Tyre_Usury_In,
-                       Gasoline_Level_In,
                        Mixture_In ,
                        Model_In ,
                        Tyre_Type_In);
@@ -240,7 +229,6 @@ package body Competitor is
                                                                 Current_Lap 		: Integer;
                                                                 Speed 			: Float;
                                                                 Predicted_Time 		: Float;
-                                                                Gas_Level 		: Float;
                                                                 Tyre_Usury 		: Common.Percentage;
                                                                 Onboard_Computer 	: Computer_Point) is
 
@@ -271,7 +259,6 @@ package body Competitor is
          Temp_Competitor_Statistics.LastCheckInSect 	:= FALSE;
          Temp_Competitor_Statistics.FirstCheckInSect 	:= FALSE;
          Temp_Competitor_Statistics.Sector 		:= Temp_Checkpoint.Get_SectorID;
-         Temp_Competitor_Statistics.Gas_Level 		:= Gas_Level;
          Temp_Competitor_Statistics.Tyre_Usury 		:= Tyre_Usury;
          Temp_Competitor_Statistics.IsPitStop 		:= TRUE;
          Temp_Competitor_Statistics.Time 		:= Predicted_Time - (Step * UpdatedCheckpoints);
@@ -296,7 +283,6 @@ package body Competitor is
                                                     Current_Lap 	: Integer;
                                                     Speed 		: Float;
                                                     Predicted_Time 	: Float;
-                                                    Gas_Level 		: Float;
                                                     Tyre_Usury 		: Common.Percentage;
                                                     Onboard_Computer 	: Computer_Point) is
       pragma Warnings(Off,Current_Checkpoint);
@@ -316,7 +302,6 @@ package body Competitor is
          Temp_Competitor_Statistics.LastCheckInSect 	:= FALSE;
          Temp_Competitor_Statistics.FirstCheckInSect 	:= FALSE;
          Temp_Competitor_Statistics.Sector 		:= Temp_Checkpoint.Get_SectorID;
-         Temp_Competitor_Statistics.Gas_Level 		:= Gas_Level;
          Temp_Competitor_Statistics.Tyre_Usury 		:= Tyre_Usury;
          Temp_Competitor_Statistics.Max_Speed 		:= Speed;
          Temp_Competitor_Statistics.IsPitStop 		:= false;
@@ -342,7 +327,6 @@ package body Competitor is
    procedure Finalize_Competitor_Statistics(Iterator 		:  out Racetrack_Iterator;
                                             Current_Lap 	: Integer;
                                             Predicted_Time 	: Float;
-                                            Gas_Level 		: Float;
                                             Tyre_Usury 		: Common.Percentage;
                                             Onboard_Computer 	: Computer_Point;
                                             Statistics 		: out Competitor_Stats) is
@@ -376,7 +360,6 @@ package body Competitor is
          Statistics.LastCheckInSect 	:= Temp_Checkpoint.Is_LastOfTheSector;
          Statistics.FirstCheckInSect 	:= Temp_Checkpoint.Is_FirstOfTheSector;
          Statistics.Sector 		:= Temp_Checkpoint.Get_SectorID;
-         Statistics.Gas_Level 		:= Gas_Level;
          Statistics.Tyre_Usury 		:= Tyre_Usury;
          Statistics.IsPitStop 		:= FALSE;
          Statistics.Time 		:= Predicted_Time;
@@ -460,11 +443,9 @@ package body Competitor is
       BrandNewStrategy := CompetitorRadio.Get_Strategy(Car_Driver.Radio, Current_Lap);
 
       --Updating the driver strategy with the first strategy given
-      --+ by the box. TODO: verify wheter to set the gas level with
-      --+ the one given by the box.
+      --+ by the box.
       Car_Driver.Current_Strategy.Tyre_Type 		:= BrandNewStrategy.Tyre_Type;
       Car_Driver.Current_Strategy.Laps_To_Pitstop 	:= BrandNewStrategy.Laps_To_Pitstop;
-      Car_Driver.Current_Strategy.Gas_Level 		:= BrandNewStrategy.Gas_Level;
       Car_Driver.Current_Strategy.Style 		:= BrandNewStrategy.Style;
 
       loop
@@ -474,7 +455,6 @@ package body Competitor is
          Ada.Text_IO.Put_Line(Integer'Image(Car_Driver.Id)& Integer'Image(id)&
                               ": SUMMURY lap : " & Integer'IMAGE(Current_Lap) &
                               ", actual time : " & Float'Image(Actual_Time) &
-                              ", gas " & Float'IMAGE(Car_Driver.Racing_Car.Gasoline_Level) &
                               ", tyre " & Float'IMAGE(Car_Driver.Racing_Car.Tyre_Usury) &
                               ", pit stop done " & BOOLEAN'IMAGE(Pit_StopDone));
          --Viene segnalato l'arrivo effettivo al checkpoint. In caso risulti primo,
@@ -535,7 +515,6 @@ package body Competitor is
 
                Evaluate(C_Checkpoint,Paths_2_Cross,Car_Driver.Id,Car_Driver.Current_Strategy.Style,Car_Driver.Racing_Car.Max_Speed,
                         Car_Driver.Racing_Car.Max_Acceleration,Car_Driver.Racing_Car.Tyre_Type,Car_Driver.Racing_Car.Tyre_Usury,
-                        Car_Driver.Racing_Car.Gasoline_Level,Length_Path, Crossing_Time,Speed,Car_Driver.Racing_Car.Last_Speed_Reached);
 
                --original driver speed restored.
                Car_Driver.Racing_Car.Max_Speed := OriginalSpeed;
@@ -544,7 +523,6 @@ package body Competitor is
 
             Evaluate(C_Checkpoint,Paths_2_Cross,Car_Driver.Id,Car_Driver.Current_Strategy.Style,Car_Driver.Racing_Car.Max_Speed,
                      Car_Driver.Racing_Car.Max_Acceleration,Car_Driver.Racing_Car.Tyre_Type,Car_Driver.Racing_Car.Tyre_Usury,
-                     Car_Driver.Racing_Car.Gasoline_Level,Length_Path, Crossing_Time,Speed,Car_Driver.Racing_Car.Last_Speed_Reached);
          end if;
 
          Ada.Text_IO.Put_Line(Integer'Image(Car_Driver.Id) & ": evaluate done:" &
@@ -578,7 +556,7 @@ package body Competitor is
             Fill_Up_Statistics_From_Prebox_To_Goal(Car_Driver.Current_Circuit_Race_Iterator,
                                                    Current_Checkpoint, Current_Lap,
                                                    Speed, Predicted_Time,
-                                                   Car_Driver.Racing_Car.Gasoline_Level, Car_Driver.Racing_Car.Tyre_Usury,
+                                                   Car_Driver.Racing_Car.Tyre_Usury,
                                                    Car_Driver.On_Board_Computer);
 
          end if;
@@ -588,7 +566,6 @@ package body Competitor is
          Comp_Stats.LastCheckInSect 	:= C_Checkpoint.Is_LastOfTheSector;
          Comp_Stats.FirstCheckInSect 	:= C_Checkpoint.Is_FirstOfTheSector;
          Comp_Stats.Sector 		:= Sector_Id;
-         Comp_Stats.Gas_Level 		:= Car_Driver.Racing_Car.Gasoline_Level;
          Comp_Stats.Tyre_Usury 		:= Car_Driver.Racing_Car.Tyre_Usury;
          Comp_Stats.Time 		:= Predicted_Time;
          Comp_Stats.Lap 		:= Current_Lap;
@@ -618,20 +595,17 @@ package body Competitor is
             Fill_Up_Statistics_From_Goal_To_ExitBox_Checkpoint(Car_Driver.Current_Circuit_Race_Iterator,
                                                                Current_Checkpoint, Current_Lap,
                                                                Speed, Predicted_Time,
-                                                               Car_Driver.Racing_Car.Gasoline_Level,
                                                                Car_Driver.Racing_Car.Tyre_Usury,
                                                                Car_Driver.On_Board_Computer);
          end if;
 
-         if(Car_Driver.Racing_Car.Gasoline_Level <= 0.0 or else
-              Car_Driver.Racing_Car.Tyre_Usury >= 100.0 or else
+         if(Car_Driver.Racing_Car.Tyre_Usury >= 100.0 or else
                 Length_Path = 0.0) then
 
             Ada.Text_IO.Put_Line(Integer'IMAGE(Car_Driver.Id) & ": Sendin away competitor at " & Float'IMAGE(Comp_Stats.Time) & " last lap " & Integer'IMAGE(LastLap));
 
             Finalize_Competitor_Statistics(Car_Driver.Current_Circuit_Race_Iterator,
                                            Current_Lap, Predicted_Time,
-                                           Car_Driver.Racing_Car.Gasoline_Level,
                                            Car_Driver.Racing_Car.Tyre_Usury,
                                            Car_Driver.On_Board_Computer,
                                            Comp_Stats);
@@ -688,10 +662,6 @@ package body Competitor is
 
             --Those updates will be effective in the next loop (next checkpoint), so
             --+ they'll be used while doing the after-box path.
-            if(BrandNewStrategy.Gas_Level /= -1.0) then
-                Car_Driver.Current_Strategy.Gas_Level := BrandNewStrategy.Gas_Level;
-                Car_Driver.Racing_Car.Gasoline_Level := BrandNewStrategy.Gas_Level;
-            end if;
             Car_Driver.Current_Strategy.Tyre_Type := BrandNewStrategy.Tyre_Type;
             Car_Driver.Racing_Car.Tyre_Type := BrandNewStrategy.Tyre_Type;
 
@@ -745,11 +715,6 @@ package body Competitor is
    begin
       return Competitor_In.Racing_Car.Tyre_Usury;
    end Get_Tyre_Usury;
-
-   function Get_Gasoline_Level(Competitor_In : Competitor_Details_Point) return Float is
-   begin
-      return Competitor_In.Racing_Car.Gasoline_Level;
-   end Get_Gasoline_Level;
 
    function Get_Max_Acceleration(Competitor_In : Competitor_Details_Point) return Float is
    begin

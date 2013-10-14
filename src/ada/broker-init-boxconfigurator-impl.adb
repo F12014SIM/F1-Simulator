@@ -43,16 +43,6 @@ package body Broker.Init.BoxConfigurator.Impl is
          BoxStrategy_out := BoxStrategy;
       end Get_BoxStrategy;
 
-      entry Get_GasTankCapacity ( GasTankCapacity_Out : out Standard.FLOAT)  when Initialized is
-      begin
-         GasTankCapacity_out := GasTankCapacity;
-      end Get_GasTankCapacity;
-
-      entry Get_InitialGasLevel ( InitialGasLevel_Out : out Standard.FLOAT)  when Initialized is
-      begin
-         InitialGasLevel_out := InitialGasLevel;
-      end Get_InitialGasLevel;
-
       entry Get_InitialTyreType ( InitialTyreType_Out : out Unbounded_String.Unbounded_String)  when Initialized is
       begin
          InitialTyreType_out := InitialTyreType;
@@ -103,24 +93,6 @@ package body Broker.Init.BoxConfigurator.Impl is
          end if;
       end Set_BoxStrategy;
 
-      procedure Set_GasTankCapacity ( GasTankCapacity_in : in Standard.FLOAT) is
-      begin
-         GasTankCapacity := GasTankCapacity_In;
-         ConfiguredParameters := ConfiguredParameters + 1;
-         if ( ConfiguredParameters = 8)  then
-            Initialized := true;
-         end if;
-      end Set_GasTankCapacity;
-
-      procedure Set_InitialGasLevel ( InitialGasLevel_in : in Standard.FLOAT) is
-      begin
-         InitialGasLevel := InitialGasLevel_In;
-         ConfiguredParameters := ConfiguredParameters + 1;
-         if ( ConfiguredParameters = 8)  then
-            Initialized := true;
-         end if;
-      end Set_InitialGasLevel;
-
       procedure Set_InitialTyreType ( InitialTyreType_in : in Unbounded_String.Unbounded_String) is
       begin
          InitialTyreType := InitialTyreType_In;
@@ -144,8 +116,6 @@ package body Broker.Init.BoxConfigurator.Impl is
       BoxStrategy : Artificial_Intelligence.Box_Strategy;
       InitialTyreType : Unbounded_String.Unbounded_String := Unbounded_String.Null_Unbounded_String;
       CircuitLength : Standard.FLOAT;
-      InitialGasLevel : Standard.FLOAT;
-      GasTankCapacity : Standard.FLOAT;
       CompetitorID : INTEGER;
       Laps : POSITIVE;
 
@@ -164,8 +134,6 @@ package body Broker.Init.BoxConfigurator.Impl is
       InitialTyreType := Unbounded_String.To_Unbounded_String(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"initialTyreType"))));
       Laps := POSITIVE'Value(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"laps"))));
       CircuitLength := Standard.FLOAT'Value(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"circuitLength"))));
-      GasTankCapacity := Standard.FLOAT'Value(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"gasTankCapacity"))));
-      InitialGasLevel := Standard.FLOAT'Value(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"initialGasLevel"))));
       CompetitorID := INTEGER'Value(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"competitorID"))));
       BoxStrategy_Str := Unbounded_String.To_Unbounded_String(Node_Value(First_Child(Common.Get_Feature_Node(Current_Node,"boxStrategy"))));
 
@@ -186,8 +154,6 @@ package body Broker.Init.BoxConfigurator.Impl is
       Settings.Set_CompetitorID(CompetitorID);
       Settings.Set_CircuitLength(CircuitLength);
       Settings.Set_BoxStrategy(BoxStrategy);
-      Settings.Set_GasTankCapacity(GasTankCapacity);
-      Settings.Set_InitialGasLevel(InitialGasLevel);
       Settings.Set_InitialTyreType(InitialTyreType);
 
       return CORBA.To_CORBA_String(Unbounded_String.To_String(CompetitionMonitor_CorbaLOC));

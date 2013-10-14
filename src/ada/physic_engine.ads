@@ -23,7 +23,6 @@ package Physic_Engine is
                       Max_Acceleration   : Float;
                       Tyre_Type          : String_Unb.Unbounded_String;
                       Tyre_Usury         : in out Float;
-                      Gasoline_Level     : in out Float;
                       Length_Path        : out Float;
                       Crossing_Time_Out  : out Float;
                       Speed_Out          : out Float;

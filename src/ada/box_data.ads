@@ -10,7 +10,6 @@ package Box_Data is
    type Info_Node_Point is access Info_Node;
 
    type Competition_Update is tagged record
-      Gas_Level   : Float;
       Tyre_Usury  : Percentage;
       Time        : Float;
       Lap         : Integer;
@@ -23,7 +22,6 @@ package Box_Data is
    with
       record
          Mean_Speed           : Float; -- km/h
-         Mean_Gas_Consumption : Float; -- l/h
          Mean_Tyre_Usury      : Percentage;
       end record;
 
