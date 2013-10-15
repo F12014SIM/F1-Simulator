@@ -1,5 +1,5 @@
 package body Artificial_Intelligence is
-
+with ada.numerics.float_random
    -- Depending on the driving style, the mean degradation for lap
    --+ will change. 1 step is like moving from NORMAL to AGGRESSIVE.
    --+ If the style switch from AGGRESSIVE to conservative, the
@@ -7,7 +7,8 @@ package body Artificial_Intelligence is
    Driving_Style_Step_Modifier_Tyre : constant Float := 0.03;
 
    -- Time needed at the box to change the tyres (seconds)
-   Tyre_Switch_Seconds : constant Float := 1.2;
+   subtype tyre_sec is float range 2.8..4.0;
+   Tyre_Switch_Seconds : constant Float := tyre_sec;
 
    -- Car details
    Tyre_Type : Unbounded_String.Unbounded_String;
