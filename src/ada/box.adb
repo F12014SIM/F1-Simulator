@@ -28,7 +28,15 @@ package body Box is
    --+ of circuit nor to the driving style of the competitor. They're
    --+ ought to be used to calculate the first statistics when
    --+no statistical information are available yet.
-   Mean_Tyre_Usury_Per_Km : Percentage := 0.83;
+   Tyre_Type : Unbounded_String.Unbounded_String;
+   if (Tyre_Type = soft) then
+   Mean_Tyre_Usury_Per_Km : Percentage := 10.4/3.2;
+   elsif (Tyre_tipe = medium) then
+   Mean_Tyre_Usury_Per_Km : Percentage := 6.8/3.2;
+   else
+   Mean_Tyre_Usury_Per_Km : Percentage := 4.6/3.2;
+   end if;
+   
 
    -- Total laps
    Laps : Integer := 0;
